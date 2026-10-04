@@ -27,11 +27,7 @@ export default function Login({ navigation }) {
     try {
 
       // Faz login usando Firebase Authentication
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        senha
-      );
+      await signInWithEmailAndPassword(auth, email, senha);
 
       // Login realizado com sucesso
       navigation.navigate('Home');

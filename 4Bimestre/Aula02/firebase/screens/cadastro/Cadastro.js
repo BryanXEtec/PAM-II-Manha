@@ -39,12 +39,7 @@ export default function Cadastro({ navigation }) {
     try {
 
       // Cria o usuário no Firebase Authentication
-      const usuarioCriado =
-        await createUserWithEmailAndPassword(
-          auth,
-          email,
-          senha
-        );
+      const usuarioCriado = await createUserWithEmailAndPassword(auth, email, senha);
 
       // Pega o ID único do usuário
       const uid = usuarioCriado.user.uid;

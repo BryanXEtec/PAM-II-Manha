@@ -1,11 +1,4 @@
-import {
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import {  Text,  View,  TextInput,  TouchableOpacity,  Alert,  ActivityIndicator,} from 'react-native';
 
 import { useEffect, useState } from 'react';
 
