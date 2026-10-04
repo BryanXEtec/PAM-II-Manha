@@ -2,7 +2,7 @@ import {  Text,  View,  TextInput,  Button,  Image,  TouchableOpacity} from 'rea
 
 import estilos from './estilo';
 
-export default function Login({ navigation }) {
+export default function Cadastro({ navigation }) {
   return (
     <View style={estilos.container}>
 
@@ -13,12 +13,26 @@ export default function Login({ navigation }) {
         style={estilos.imagem}
       />
 
+      <Text style={estilos.titulo}>
+        Criar uma conta
+      </Text>
+
       <Text style={estilos.texto}>
-        Digite o e-mail
+        Nome
+      </Text>
+
+      <TextInput
+        placeholder="Digite seu nome"
+        style={estilos.input}
+      />
+
+      <Text style={estilos.texto}>
+        E-mail
       </Text>
 
       <TextInput
         placeholder="fulano@hotmail.com"
+        keyboardType="email-address"
         style={estilos.input}
       />
 
@@ -27,24 +41,33 @@ export default function Login({ navigation }) {
       </Text>
 
       <TextInput
-        placeholder="abc@123"
+        placeholder="Digite sua senha"
+        secureTextEntry={true}
+        style={estilos.input}
+      />
+
+      <Text style={estilos.texto}>
+        Confirmar senha
+      </Text>
+
+      <TextInput
+        placeholder="Digite a senha novamente"
         secureTextEntry={true}
         style={estilos.input}
       />
 
       <View style={estilos.botao}>
         <Button
-          title="Entrar"
+          title="Cadastrar"
           onPress={() => navigation.navigate('Home')}
         />
       </View>
 
-      {/* Cadastro */}
       <TouchableOpacity
-        onPress={() => navigation.navigate('Cadastro')}
+        onPress={() => navigation.navigate('Login')}
       >
-        <Text style={estilos.cadastro}>
-          Não possui uma conta? Cadastre-se
+        <Text style={estilos.login}>
+          Já possui uma conta? Entrar
         </Text>
       </TouchableOpacity>
 
