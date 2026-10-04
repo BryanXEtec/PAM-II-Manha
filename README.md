@@ -2,24 +2,23 @@
 
 Bryan Braggion
 
-react_exemplo
+Abra o terminal para usar estes códigos:
 
-npx create-expo-app nome_do_app
+Para quem não fez o APP use este comando abaixo 
 
-cd nome_do_app
+ npx create-expo-app nome_do_app --template blank
 
-npm iniciar
+Para poder emular no navegador o APP.
 
-react_vazio
+ npx expo install react-dom react-native-web @expo/metro-runtime
 
-npx create-expo-app nome_do_app --template blank
+Estes três são bibliotecas que permitem criar a navegação de telas
 
-cd nome_do_app
+ npx expo install @react-navigation/native
+ npx expo install react-native-screens react-native-safe-area-context
+ npm install @react-navigation/native-stack
 
-npx expo install react-dom react-native-web @expo/metro-runtime
 
-npm run web
+Instalar firebase
 
-npx expo start --web
-
-https://reactnative.dev/docs/style
+npm install firebase

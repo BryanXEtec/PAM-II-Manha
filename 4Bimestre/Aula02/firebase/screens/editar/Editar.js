@@ -4,11 +4,130 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
+
+import { useEffect, useState } from 'react';
+
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+
+import { auth, db } from '../../firebase/firebase';
 
 import estilos from './estilo';
 
 export default function Editar({ navigation }) {
+
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [usuario, setUsuario] = useState('');
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    carregarDados();
+  }, []);
+
+  async function carregarDados() {
+
+    try {
+
+      const usuarioLogado = auth.currentUser;
+
+      if (!usuarioLogado) {
+        navigation.navigate('Login');
+        return;
+      }
+
+      // E-mail vem do Authentication
+      setEmail(usuarioLogado.email);
+
+      // Busca os dados no Firestore
+      const referencia = doc(
+        db,
+        'usuarios',
+        usuarioLogado.uid
+      );
+
+      const documento = await getDoc(referencia);
+
+      if (documento.exists()) {
+
+        const dados = documento.data();
+
+        setNome(dados.nome || '');
+        setUsuario(dados.usuario || '');
+
+      }
+
+    } catch (error) {
+
+      console.log('Erro ao carregar dados:', error);
+
+      Alert.alert(
+        'Erro',
+        'Não foi possível carregar seus dados.'
+      );
+
+    } finally {
+
+      setCarregando(false);
+
+    }
+  }
+
+  async function salvarAlteracoes() {
+
+    if (!nome || !usuario) {
+      Alert.alert(
+        'Atenção',
+        'Preencha o nome e o usuário.'
+      );
+      return;
+    }
+
+    try {
+
+      const usuarioLogado = auth.currentUser;
+
+      if (!usuarioLogado) {
+        navigation.navigate('Login');
+        return;
+      }
+
+      // Referência do documento do usuário
+      const referencia = doc(
+        db,
+        'usuarios',
+        usuarioLogado.uid
+      );
+
+      // Atualiza os dados no Firestore
+      await updateDoc(referencia, {
+        nome: nome,
+        usuario: usuario,
+      });
+
+      navigation.navigate('Perfil');
+
+    } catch (error) {
+
+      console.log('Erro ao salvar:', error);
+
+      Alert.alert(
+        'Erro',
+        'Não foi possível salvar as alterações.'
+      );
+    }
+  }
+
+  if (carregando) {
+    return (
+      <View style={estilos.container}>
+        <ActivityIndicator size="large" />
+        <Text>Carregando dados...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={estilos.container}>
 
@@ -29,7 +148,8 @@ export default function Editar({ navigation }) {
         <TextInput
           style={estilos.input}
           placeholder="Digite seu nome"
-          defaultValue="Fulano da Silva"
+          value={nome}
+          onChangeText={setNome}
         />
 
         <Text style={estilos.label}>
@@ -38,9 +158,9 @@ export default function Editar({ navigation }) {
 
         <TextInput
           style={estilos.input}
-          placeholder="Digite seu e-mail"
-          keyboardType="email-address"
-          defaultValue="fulano@hotmail.com"
+          placeholder="Seu e-mail"
+          value={email}
+          editable={false}
         />
 
         <Text style={estilos.label}>
@@ -50,20 +170,15 @@ export default function Editar({ navigation }) {
         <TextInput
           style={estilos.input}
           placeholder="Digite seu usuário"
-          defaultValue="fulano123"
+          value={usuario}
+          onChangeText={setUsuario}
+          autoCapitalize="none"
         />
 
         {/* Salvar */}
         <TouchableOpacity
           style={estilos.botaoSalvar}
-          onPress={() => {
-            Alert.alert(
-              'Sucesso',
-              'Seus dados foram alterados!'
-            );
-
-            navigation.navigate('Perfil');
-          }}
+          onPress={salvarAlteracoes}
         >
           <Text style={estilos.textoBotao}>
             Salvar alterações

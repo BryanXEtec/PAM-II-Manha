@@ -1,8 +1,85 @@
-import {  Text,  View,  Image,  TouchableOpacity,} from 'react-native';
+import {
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+
+import { useEffect, useState } from 'react';
+
+import { doc, getDoc } from 'firebase/firestore';
+
+import { auth, db } from '../../firebase/firebase';
 
 import estilos from './estilo';
 
 export default function Perfil({ navigation }) {
+
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [usuario, setUsuario] = useState('');
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    carregarPerfil();
+  }, []);
+
+  async function carregarPerfil() {
+
+    try {
+
+      // Pega o usuário que está logado
+      const usuarioLogado = auth.currentUser;
+
+      // Se não tiver usuário logado, volta para o Login
+      if (!usuarioLogado) {
+        navigation.navigate('Login');
+        return;
+      }
+
+      // E-mail do usuário logado
+      setEmail(usuarioLogado.email);
+
+      // Busca os dados no Firestore
+      const referencia = doc(
+        db,
+        'usuarios',
+        usuarioLogado.uid
+      );
+
+      const documento = await getDoc(referencia);
+
+      if (documento.exists()) {
+
+        const dados = documento.data();
+
+        setNome(dados.nome || '');
+        setUsuario(dados.usuario || '');
+
+      }
+
+    } catch (error) {
+
+      console.log('Erro ao carregar perfil:', error);
+
+    } finally {
+
+      setCarregando(false);
+
+    }
+  }
+
+  // Enquanto busca os dados
+  if (carregando) {
+    return (
+      <View style={estilos.container}>
+        <ActivityIndicator size="large" />
+        <Text>Carregando perfil...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={estilos.container}>
 
@@ -25,11 +102,11 @@ export default function Perfil({ navigation }) {
       <View style={estilos.info}>
 
         <Text style={estilos.nome}>
-          Fulano da Silva
+          {nome}
         </Text>
 
         <Text style={estilos.email}>
-          fulano@hotmail.com
+          {email}
         </Text>
 
       </View>
@@ -43,7 +120,7 @@ export default function Perfil({ navigation }) {
           </Text>
 
           <Text style={estilos.valor}>
-            Fulano da Silva
+            {nome}
           </Text>
         </View>
 
@@ -55,7 +132,7 @@ export default function Perfil({ navigation }) {
           </Text>
 
           <Text style={estilos.valor}>
-            fulano@hotmail.com
+            {email}
           </Text>
         </View>
 
@@ -67,7 +144,7 @@ export default function Perfil({ navigation }) {
           </Text>
 
           <Text style={estilos.valor}>
-            fulano123
+            {usuario}
           </Text>
         </View>
 
